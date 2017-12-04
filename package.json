@@ -1,6 +1,6 @@
 {
   "name": "microweb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple web framework based on koa.",
   "main": "dist/index.js",
   "author": "eeve",
@@ -30,8 +30,18 @@
     "standard": "^10.0.3"
   },
   "dependencies": {
+    "@koa/cors": "^2.2.1",
     "bookshelf": "^0.11.1",
+    "bookshelf-json-columns": "^2.1.1",
+    "bookshelf-mask": "^2.0.1",
+    "bunyan": "^1.8.12",
     "knex": "^0.13.0",
+    "koa": "^2.4.1",
+    "koa-body": "^2.5.0",
+    "koa-helmet": "^3.3.0",
+    "koa-router": "^7.3.0",
+    "koa-static2": "^0.1.8",
+    "koa2-history-api-fallback": "^0.0.5",
     "moment": "^2.19.2",
     "mysql": "^2.15.0"
   }
