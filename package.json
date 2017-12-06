@@ -1,6 +1,6 @@
 {
   "name": "microweb",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple web framework based on koa.",
   "main": "dist/index.js",
   "author": "eeve",

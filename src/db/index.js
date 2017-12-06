@@ -4,7 +4,7 @@ import moment from 'moment'
 import mask from 'bookshelf-mask'
 import json from 'bookshelf-json-columns'
 
-const dbs = {}
+export const dbs = {}
 
 export function registerDataBase (key, type, config, extraConf = {}) {
   if (dbs[key]) { throw new Error('数据库key已经被使用') }
