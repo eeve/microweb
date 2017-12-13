@@ -15,10 +15,11 @@ export function params (...fields) {
         error: false,
         model: result
       }
-    } catch ({ message }) {
+    } catch (err) {
+      ctx.logger && ctx.logger.error('API处理异常', err)
       ctx.body = {
         error: true,
-        model: message
+        model: err.message
       }
     }
   }

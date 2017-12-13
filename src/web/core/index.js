@@ -20,6 +20,7 @@ export class App {
   _Services = new Map()
   _Config
   _Log
+  _Interceptors = []
 
   constructor (cfg) {
     this._Config = _.merge(config, cfg)
@@ -56,8 +57,14 @@ export class App {
     return this.mountController(Ctrl)
   }
 
+  mountControllers (CtrlsObj) {
+    Object.keys(CtrlsObj).forEach(key => {
+      this.mountController(CtrlsObj[key])
+    })
+  }
+
   mountService (Service) {
-    const serviceInstance = new Service()
+    const serviceInstance = new Service(this)
     this._Services.set(serviceInstance.constructor.name, serviceInstance)
   }
 
@@ -65,8 +72,21 @@ export class App {
     return this.mountService(Service)
   }
 
+  mountServices (ServicesObj) {
+    Object.keys(ServicesObj).forEach(key => {
+      this.mountService(ServicesObj[key])
+    })
+  }
+
   use (...args) {
     return this._KoaApp.use(...args)
+  }
+
+  interceptor (middleware) {
+    if (!_.isFunction(middleware)) {
+      throw new Error('interceptor must be a function')
+    }
+    this._Interceptors.push(middleware)
   }
 
   get Services () {
@@ -125,6 +145,7 @@ export class App {
   __register__ () {
     this.__registerprobe__()
     const router = new Router()
+    this._Interceptors.forEach(interceptor => router.use(interceptor))
     if (this.settings.prefix) {
       this.logger.debug('Api prefix {%s}', this.settings.prefix)
     }

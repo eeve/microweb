@@ -1,21 +1,25 @@
 import _ from 'lodash'
+import { BaseClass } from '../core/base'
 import { ServiceError } from './error'
 
-export class BaseService {
+export class BaseService extends BaseClass {
 }
 
 export class BasicService extends BaseService {
   Model
   /**
    * 初始化service
+   * @param {object} app app实例
    * @param {object} model 此service的基本model类
    */
-  constructor (model) {
-    super()
-    if (!_.isFunction(model) || !_.isObject(model)) {
-      throw new ServiceError('model is‘t a Bookshelf.Model')
+  constructor (app, model) {
+    super(app)
+    if (model) {
+      if (!_.isFunction(model) || !_.isObject(model)) {
+        throw new ServiceError('model is‘t a Bookshelf.Model')
+      }
+      this.Model = model
     }
-    this.Model = model
   }
 
   /**
@@ -46,11 +50,29 @@ export class BasicService extends BaseService {
 
 export class Service extends BasicService {
   /**
+   * 供子类调用当前类方法的方法
+   * @param {string} method 方法名称
+   * @param {*} args 调用参数
+   * @see https://github.com/babel/babel/issues/3930
+   */
+  callSuper (method, ...args) {
+    return Service.prototype[method].call(this, ...args)
+  }
+
+  /**
    * 查询匹配vo的所有数据
    * @param {object} vo model对象，如果设置了则会where匹配
    */
   find (vo) {
-    return this.model(vo).fetchAll()
+    return this.model(vo).where(vo).fetchAll()
+  }
+
+  /**
+   * 查询指定pk的model
+   * @param {number} pk pk值
+   */
+  async findByPK (pk) {
+    return (await this.find({ [this.__getPk__()]: pk })).last()
   }
 
   /**
@@ -123,11 +145,30 @@ export class Service extends BasicService {
   }
 
   /**
+   * 根据pk更新model
+   * @param {number} pk pk值
+   * @param {object} vo model更新的对象
+   */
+  updateByPK (pk, vo) {
+    const tempVo = { ...vo, [this.__getPk__()]: pk }
+    return this.update(tempVo)
+  }
+
+  /**
    * 按条件删除一个model到数据库
    * @param {object} dto model条件对象
    */
   delete (dto) {
     this.__checkPk__(dto)
     return this.model(dto).destroy()
+  }
+
+  /**
+   * 根据pk删除model
+   * @param {number} pk pk值
+   */
+  deleteByPK (pk) {
+    const tempVo = { [this.__getPk__()]: pk }
+    return this.delete(tempVo)
   }
 }
