@@ -11,6 +11,8 @@ import config from '../config'
 
 import { ProbeController } from '../probe'
 import { Router } from '../router'
+import { BaseService } from '../mvc/service'
+import { Controller } from '../mvc/controller'
 import Logger from '../logger'
 import { resolve, notExistMkdir } from '../../utils'
 
@@ -50,6 +52,9 @@ export class App {
 
   mountController (Ctrl) {
     const ctrlInstance = new Ctrl(this)
+    if (!(ctrlInstance instanceof Controller)) {
+      throw new Error(`Controller ${ctrlInstance.constructor.name} not instanceof Controller`)
+    }
     this._Controllers.set(ctrlInstance.constructor.name, ctrlInstance)
   }
 
@@ -65,6 +70,9 @@ export class App {
 
   mountService (Service) {
     const serviceInstance = new Service(this)
+    if (!(serviceInstance instanceof BaseService)) {
+      throw new Error(`Service ${serviceInstance.constructor.name} not instanceof BaseService`)
+    }
     this._Services.set(serviceInstance.constructor.name, serviceInstance)
   }
 

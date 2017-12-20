@@ -5,7 +5,7 @@ import { ServiceError } from './error'
 export class BaseService extends BaseClass {
 }
 
-export class BasicService extends BaseService {
+export class BasicModelService extends BaseService {
   Model
   /**
    * 初始化service
@@ -16,12 +16,14 @@ export class BasicService extends BaseService {
     super(app)
     if (model) {
       if (!_.isFunction(model) || !_.isObject(model)) {
-        throw new ServiceError('model is‘t a Bookshelf.Model')
+        throw new ServiceError('model is‘t a Object')
       }
       this.Model = model
     }
   }
+}
 
+export class BasicService extends BasicModelService {
   /**
    * 根据属性伪造构造一个bookshelf model对象
    * @param {object} args 属性对象
