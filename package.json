@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "babel-node --inspect src/index.js",
-    "test": "cross-env DEBUG=knex:query babel-node --inspect test/index.js",
+    "test": "cross-env DEBUG=knex:query babel-node --inspect test/app.js",
     "build": "cross-env NODE_ENV=production babel src --out-dir dist",
     "prepublish": "npm run build"
   },

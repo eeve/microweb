@@ -55,7 +55,9 @@ export class App {
     if (!(ctrlInstance instanceof Controller)) {
       throw new Error(`Controller ${ctrlInstance.constructor.name} not instanceof Controller`)
     }
-    this._Controllers.set(ctrlInstance.constructor.name, ctrlInstance)
+    if (!this._Controllers.has(ctrlInstance.constructor.name)) {
+      this._Controllers.set(ctrlInstance.constructor.name, ctrlInstance)
+    }
   }
 
   mController (Ctrl) {
@@ -73,7 +75,9 @@ export class App {
     if (!(serviceInstance instanceof BaseService)) {
       throw new Error(`Service ${serviceInstance.constructor.name} not instanceof BaseService`)
     }
-    this._Services.set(serviceInstance.constructor.name, serviceInstance)
+    if (!this._Services.has(serviceInstance.constructor.name)) {
+      this._Services.set(serviceInstance.constructor.name, serviceInstance)
+    }
   }
 
   mService (Service) {
@@ -128,7 +132,7 @@ export class App {
   /**
    * 启动应用服务
    */
-  listen (port) {
+  listen (port = config.port) {
     // pass
     this.__register__()
     // api fallback
@@ -177,8 +181,25 @@ export class App {
     }
     this._KoaApp.use(router.routes())
     this._KoaApp.use(router.allowedMethods())
+    this.__errorhandler__()
     this.logger.debug('------------------------------------------')
     return router
+  }
+
+  /**
+   * 错误状态处理
+   */
+  __errorhandler__ () {
+    this.use((ctx) => {
+      switch (ctx.status) {
+        case 404:
+          ctx.body = { error: true, model: 404 }
+          break
+        case 500:
+          ctx.body = { error: true, model: 500 }
+          break
+      }
+    })
   }
 
   /**

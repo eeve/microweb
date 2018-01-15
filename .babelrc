@@ -6,7 +6,9 @@
 				"node": 6
 			}
 		}],
-		"minify"
+		["minify", {
+			"keepClassName": true
+		}]
 	],
 	"retainLines": true,
 	"plugins": [

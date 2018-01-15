@@ -30,6 +30,10 @@ export class Controller extends BasicController {
    * @param {string} sname 服务名称
    */
   __injectOneServices__ (sname) {
+    if (_.isObject(sname)) {
+      this.app.mountService(sname)
+      sname = sname.name
+    }
     this.logger.debug('√ Inject Service %s', sname)
     const serviceInstance = this.__getServiveInstanceByName__(sname)
     if (serviceInstance === undefined) {
