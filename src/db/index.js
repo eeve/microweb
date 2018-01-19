@@ -4,13 +4,10 @@ import moment from 'moment'
 import mask from 'bookshelf-mask'
 import json from 'bookshelf-json-columns'
 
-export const dbs = {}
-
-export function registerDataBase (key, type, config, extraConf = {}) {
-  if (dbs[key]) { throw new Error('数据库key已经被使用') }
+export function registerDataBase (type, config, extraConf = {}) {
   if (!type) { throw new Error('不支持的数据库类型') }
   const Knex = knex({
-    client: 'mysql',
+    client: type,
     connection: config
   })
   const Orm = bookshelf(Knex)
@@ -18,7 +15,6 @@ export function registerDataBase (key, type, config, extraConf = {}) {
   Orm.plugin('visibility')
   Orm.plugin(mask)
   Orm.plugin(json)
-  dbs[key] = { key, config, extraConf, Knex, Orm }
 
   // 同步数据库结构
   const proto = Object.getPrototypeOf(Knex.schema)
@@ -44,5 +40,15 @@ export function registerDataBase (key, type, config, extraConf = {}) {
       return attrs
     }
   }
-  return BaseModel
+
+  return { config, extraConf, Knex, Orm, BaseModel }
+}
+
+export const DB = { 
+  knex,
+  bookshelf,
+  plugins: {
+    mask,
+    json
+  }
 }
