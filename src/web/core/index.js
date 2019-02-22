@@ -129,6 +129,17 @@ export class App {
    * 启动应用服务
    */
   listen (port) {
+    this.__beforeListen__()
+    // listen
+    const _port = port || this.settings.port
+    this._KoaApp.listen(_port)
+    this.logger.debug('App Ready. Server running at http://localhost:%d/', _port)
+  }
+
+  /**
+   * 监听之前
+   */
+  __beforeListen__ () {
     // pass
     this.__register__()
     // api fallback
@@ -141,10 +152,6 @@ export class App {
         this._KoaApp.use(serve(prefix, resolve(this.settings.static[prefix])))
       }
     }
-    // listen
-    const _port = port || this.settings.port
-    this._KoaApp.listen(_port)
-    this.logger.debug('App Ready. Server running at http://localhost:%d/', _port)
   }
 
   /**
